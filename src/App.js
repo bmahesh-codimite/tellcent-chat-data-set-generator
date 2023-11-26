@@ -35,7 +35,7 @@ export default function App() {
         event.preventDefault()
         if(chat.length === 1){
             textBison({
-                sender:"user",
+                author:"user",
                 content: event.target.chat.value
             }).then((res)=>{
                 return res.json()
@@ -43,11 +43,11 @@ export default function App() {
                 setChat([
                     ...chat,
                     {
-                        sender:"user",
+                        author:"user",
                         content: event.target.chat.value
                     },
                     {
-                        sender:"bot",
+                        author:"bot",
                         content: res.predictions[0].content
                     }
                 ])
@@ -60,7 +60,7 @@ export default function App() {
             })
         }else{
             chatBison({
-                sender:"user",
+                author:"user",
                 content: event.target.chat.value
             }).then((res)=>{
                 return res.json()
@@ -68,11 +68,11 @@ export default function App() {
                 setChat([
                     ...chat,
                     {
-                        sender:"user",
+                        author:"user",
                         content: event.target.chat.value
                     },
                     {
-                        sender:"bot",
+                        author:"bot",
                         content: res.predictions[0].candidates[0].content
                     }
                 ])
@@ -89,7 +89,7 @@ export default function App() {
             instances: [
                 {
                     context: buildChatPrompt(),
-                    messages: [...chat,chatMessage].length % 2 !== 0 ? [...chat,chatMessage] : [...chat,chatMessage].slice(0,-1)
+                    messages: [...chat,chatMessage].length % 2 !== 0 ? [...chat,chatMessage] : [...chat,chatMessage].slice(1, [...chat,chatMessage].length)
                 }
             ]
         }
@@ -112,7 +112,7 @@ export default function App() {
         setAvailableTimeSlots(e.target.timeSlots.value)
         setChat([
             {
-                sender:"bot",
+                author:"bot",
                 content: `Hi James, I am an agent from ${e.target.orgName.value}. I would like to schedule an appointment with our experts. Is ${e.target.timeSlots.value.split("\n")[0]} convenient for you?`
             }
         ])
@@ -123,7 +123,7 @@ export default function App() {
             instances: [
                 {
                     content: `${buildTextPrompt()}${[...chat,message].map((chat)=>{
-                        return `${chat.sender === "user" ? "customer: " : "agent: "}${chat.content}`
+                        return `${chat.author === "user" ? "customer: " : "agent: "}${chat.content}`
                     }).join("\n")}\nResponse:`
                 }
             ],
@@ -244,7 +244,7 @@ export default function App() {
                                     return (
                                         <Card>
                                             <Card.Body>
-                                                {chatItem.sender === "user" ? (
+                                                {chatItem.author === "user" ? (
                                                     <Alert variant="primary">
                                                         {chatItem.content}
                                                     </Alert>

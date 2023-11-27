@@ -24,6 +24,7 @@ export default function App() {
     let [serviceInformation, setServiceInformation] = React.useState("Windshield Cleaning\nTire Rotation\nOil Change")
     let [orgName, setOrgName] = React.useState(null)
     let [chat , setChat] = React.useState([])
+    let [chatPrompt, setChatPrompt] = React.useState(chatPromptTemplate)
 
     function handleSubmit(event) {
         event.preventDefault()
@@ -145,11 +146,11 @@ export default function App() {
     }
 
     function buildChatPrompt() {
-        let chatPrompt = chatPromptTemplate
+        let prompt = chatPrompt
         chatPrompt = chatPrompt.replace("[ORGANIZATION_NAME]", orgName)
         chatPrompt = chatPrompt.replace("[AVAILABLE_TIME_SLOT]", availableTimeSlots.split("\n").map((s)=>{return "-"+s}).join("\n"))
         chatPrompt = chatPrompt.replace("[SERVICE_INFORMATION]", serviceInformation.split( "\n").map((s)=>{return "-"+s}).join("\n"))
-        return chatPrompt
+        return prompt
     }
 
     function buildTextPrompt() {
@@ -158,6 +159,11 @@ export default function App() {
         textPrompt = textPrompt.replace("[AVAILABLE_TIME_SLOT]", availableTimeSlots.split("\n").map((s)=>{return "-"+s}).join("\n"))
         textPrompt = textPrompt.replace("[SERVICE_INFORMATION]", serviceInformation.split( "\n").map((s)=>{return "-"+s}).join("\n"))
         return textPrompt
+    }
+
+    function chatBisonPrompt(e) {
+        e.preventDefault()
+        setChatPrompt(e.target.chatBisonPrompt.value)
     }
 
     return (
@@ -213,6 +219,24 @@ export default function App() {
                                     <Form.Text className="text-muted">
                                         Comma separated list of timeslots
                                     </Form.Text>
+                                </Form.Group>
+                            </Card.Body>
+                            <Card.Footer>
+                                <Button size="sm" type="submit" variant="outline-primary">Submit</Button>
+                            </Card.Footer>
+                        </Card>
+                    </form>
+                    <form onSubmit={chatBisonPrompt} method="POST">
+                        <Card>
+                            <Card.Header>
+                                <Card.Title>Chatbison Prompt</Card.Title>
+                            </Card.Header>
+                            <Card.Body>
+                                <Form.Group controlId="formBasicEmail">
+                                    <Form.Label>Chatbison Prompt</Form.Label>
+                                    <Form.Control as="textarea" name="chatBisonPrompt" rows={10} value={chatPrompt} onChange={(e)=>{
+                                        setChatPrompt(e.target.value)
+                                    }} />
                                 </Form.Group>
                             </Card.Body>
                             <Card.Footer>

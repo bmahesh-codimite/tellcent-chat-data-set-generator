@@ -13,24 +13,34 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 
-async function setValue(conversationID , conversationOBJ){
+async function setValue(conversationID , conversationOBJ , isProcessing = false){
     const db = getDatabase(app);
     let conversationRef = ref(db, `conversations/${conversationID}`);
     let snapShot = await get(conversationRef);
     if(snapShot.exists()){
         let data = snapShot.val();
-        data.push(conversationOBJ);
+        data.isProcessing = isProcessing;
+        data.conversation.push(conversationOBJ);
         await set(conversationRef,data)
         return
     }
-    await set(conversationRef,conversationOBJ);
+    await set(conversationRef,{conversation: conversationOBJ , isProcessing: isProcessing}); // Time to create a new conversation. conversationOBJ is an array of messages
     return
 }
 
-function saveChatID(conversationID){
+async function saveChatID(conversationID){
     const db = getDatabase(app);
     let savedConversationsRef = ref(db, `savedConversations`);
-    return set(savedConversationsRef,conversationID)
+    let snapShot = await get(savedConversationsRef);
+    if(snapShot.exists()){
+        let data = snapShot.val();
+        data = {
+            ...data,
+            [conversationID]: new Date().toISOString()
+        }
+        return set(savedConversationsRef,data)
+    }
+    return set(savedConversationsRef,{[conversationID]: new Date().toISOString()})
 }
 
 async function getValue(conversationID){

@@ -6,7 +6,7 @@ import "./index.css"
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
-    <NextUIProvider>
+    <NextUIProvider className='mx-auto'>
       <App />
     </NextUIProvider>
   </React.StrictMode>,

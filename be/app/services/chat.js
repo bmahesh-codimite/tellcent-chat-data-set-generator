@@ -42,12 +42,13 @@ async function startChat(req,res) {
         }
         const orgName = req.body.orgName
         let messages = [
+            new SystemMessage(await buildSysPrompt(orgName)),
             // new SystemMessage("Welcome to the chat!"),
             new HumanMessage("Hi" , {category: 200}),
             new AIMessage(`Hi I am an agent of ${orgName}. I would like to schedule an appointment for your car wash needs. Is ${new Date().toLocaleDateString()} at 10:00 AM convenient for you?`),
         ]
         let conversationDicts = toMsgs(messages)
-        await setValue(conversationID,conversationDicts)
+        await setValue(conversationID,conversationDicts,false)
         res.status(201).json({conversationID: conversationID})
     } catch (error) {
         console.error(error)
@@ -63,13 +64,13 @@ async function chat(req,res) {
             return
         }
         let messages = await getValue(conversationID)
-        if (messages === null || !Array.isArray(messages) || messages.length === 0) {
+        if (messages === null || !Array.isArray(messages.conversation) || messages.conversation.length === 0) {
             res.status(404).json({error: "Conversation not found"})
             return
         }
-        messages.push({type:"Human",content:req.body.content,timestamp:new Date().toISOString()})
-        await setValue(conversationID,{type:"Human",content:req.body.content,timestamp:new Date().toISOString()})
-        processor(conversationID,messages,req.body.orgName) // Process the conversation asynchronously
+        messages.conversation.push({type:"Human",content:req.body.content,timestamp:new Date().toISOString()})
+        await setValue(conversationID,{type:"Human",content:req.body.content,timestamp:new Date().toISOString()},true)
+        processor(conversationID,messages.conversation,req.body.orgName) // Process the conversation asynchronously
         res.status(200).json({action: "processing"}) // Return the conversation
     } catch (error) {
         console.error(error)
@@ -83,7 +84,7 @@ async function processor(conversationID , messages , orgName){
         let conversation = [await getSysMsg(orgName),...fromMsgs(messages)] // Add system message to the conversation
         let response = await model.invoke(conversation)
         let content = response.content.trimStart().trimEnd()
-        await setValue(conversationID,{type:"AI",content:content,timestamp:new Date().toISOString()})
+        await setValue(conversationID,{type:"AI",content:content,timestamp:new Date().toISOString()},false)
     } catch (error) {
         console.log(error)
     }
@@ -139,7 +140,11 @@ function toMsgs(messages) {
                 timestamp: new Date().toISOString()
             })
         } else if (message instanceof SystemMessage) {
-            continue
+            conversation.push({
+                type: "System",
+                content: message.content,
+                timestamp: new Date().toISOString()
+            })
         }else {
             conversation.push({
                 type: "Human",

@@ -1,0 +1,19 @@
+{
+  "name": "be",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@langchain/community": "^0.0.41",
+    "cors": "^2.8.5",
+    "express": "^4.19.1",
+    "firebase": "^10.9.0",
+    "google-auth-library": "^8.9.0",
+    "moment": "^2.30.1"
+  }
+}

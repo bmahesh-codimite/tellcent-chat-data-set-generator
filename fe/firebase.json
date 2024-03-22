@@ -1,0 +1,19 @@
+{
+    "hosting": {
+      "public": "dist",
+      "ignore": [],
+      "rewrites": [
+        {
+          "source": "**",
+          "destination": "/index.html"
+        }
+      ],
+      "headers": [ {
+        "source" : "index.html",
+        "headers" : [ {
+          "key" : "Access-Control-Allow-Origin",
+          "value" : "*"
+        } ]
+      } ]
+    }
+  }

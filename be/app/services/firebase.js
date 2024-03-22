@@ -27,6 +27,12 @@ async function setValue(conversationID , conversationOBJ){
     return
 }
 
+function saveChatID(conversationID){
+    const db = getDatabase(app);
+    let savedConversationsRef = ref(db, `savedConversations`);
+    return set(savedConversationsRef,conversationID)
+}
+
 async function getValue(conversationID){
     try {
         const db = getDatabase(app);
@@ -45,5 +51,6 @@ async function getValue(conversationID){
 
 module.exports = {
     setValue,
-    getValue
+    getValue,
+    saveChatID
 }

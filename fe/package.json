@@ -5,7 +5,8 @@
   "type": "module",
   "scripts": {
     "dev": "vite --mode dev",
-    "build": "tsc && vite build",
+    "build": "tsc && vite build --mode production",
+    "deploy":"gsutil -h Cache-Control:'Cache-Control:no-cache, max-age=0, no-transform' -m cp -R dist/* gs://tellcent-dev002-widgets/data-set-collector/dist/",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview"
   },

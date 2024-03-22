@@ -1,0 +1,15 @@
+steps:
+  - name: "gcr.io/cloud-builders/docker"
+    entrypoint: 'bash'
+    args:
+      - "-c"
+      - |
+        docker build \
+          -t us-central1-docker.pkg.dev/${_PROJECT_ID}/tellcent-chat-data-set-generator/${_NAMESPACE}/${_BRANCH}:${_TAG} -f ./Dockerfile .
+
+  - name: "gcr.io/cloud-builders/docker"
+    args:
+      - "push"
+      - "us-central1-docker.pkg.dev/${_PROJECT_ID}/tellcent-chat-data-set-generator/${_NAMESPACE}/${_BRANCH}:${_TAG}"
+options:
+  logging: CLOUD_LOGGING_ONLY

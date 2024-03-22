@@ -22,3 +22,11 @@ export function chat(apiKey: string , message: string) {
         }
     })
 }
+
+export function saveChat(apiKey: string) {
+    return axios.post("/chat/save", {},{
+        headers:{
+            "X-Api-Key": apiKey
+        }
+    })
+}

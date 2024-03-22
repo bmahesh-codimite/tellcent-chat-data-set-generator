@@ -1,6 +1,6 @@
 const { ChatGoogleVertexAI } = require("@langchain/community/chat_models/googlevertexai");
 const { AIMessage, HumanMessage, SystemMessage} = require( "@langchain/core/messages");
-const { setValue, getValue } = require("./firebase");
+const { setValue, getValue , saveChatID: saveChat } = require("./firebase");
 const { X_API_KEY } = require("./constants")
 const { PromptTemplate } = require("@langchain/core/prompts");
 const { SYS_PROMPT_TEMPLATE } = require("./prompts");
@@ -112,6 +112,23 @@ function getConversationID(req){
     return req.headers[X_API_KEY]
 }
 
+async function saveChatID(req , res) {
+    try {
+        const conversationID = req.headers[X_API_KEY]
+        if (typeof conversationID === "undefined" || conversationID === null) {
+            res.status(401).json({error: "Unauthorized"})
+            return
+        }
+        await saveChat(conversationID)
+        res.status(201).json({message:"Chat saved Successfully. Thank you for your suppor!"})
+        return
+    } catch (error) {
+        console.error(error)
+        res.status(500).json({error: "Internal Server Error"})
+        return
+    }
+}
+
 function toMsgs(messages) {
     let conversation = []
     for (let message of messages) {
@@ -137,5 +154,6 @@ function toMsgs(messages) {
 
 module.exports = {
     startChat,
-    chat
+    chat,
+    saveChatID
 }

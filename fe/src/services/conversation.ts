@@ -30,3 +30,14 @@ export function saveChat(apiKey: string) {
         }
     })
 }
+
+export function rateChat(apiKey: string, rating: string) {
+    let req = {
+        rating: rating
+    }
+    return axios.post("/chat/rate", req,{
+        headers:{
+            "X-Api-Key": apiKey
+        }
+    })
+}

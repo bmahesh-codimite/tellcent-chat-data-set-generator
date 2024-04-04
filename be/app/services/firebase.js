@@ -13,7 +13,7 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 
-async function setValue(conversationID , conversationOBJ , isProcessing = false){
+async function setValue(conversationID , conversationOBJ , isProcessing = false , timeSlots){
     const db = getDatabase(app);
     let conversationRef = ref(db, `conversations/${conversationID}`);
     let snapShot = await get(conversationRef);
@@ -21,10 +21,11 @@ async function setValue(conversationID , conversationOBJ , isProcessing = false)
         let data = snapShot.val();
         data.isProcessing = isProcessing;
         data.conversation.push(conversationOBJ);
+        if(timeSlots) data.timeSlots = timeSlots;
         await set(conversationRef,data)
         return
     }
-    await set(conversationRef,{conversation: conversationOBJ , isProcessing: isProcessing}); // Time to create a new conversation. conversationOBJ is an array of messages
+    await set(conversationRef,{conversation: conversationOBJ , isProcessing: isProcessing , timeSlots: timeSlots}); // Time to create a new conversation. conversationOBJ is an array of messages
     return
 }
 
@@ -41,6 +42,21 @@ async function saveChatID(conversationID){
         return set(savedConversationsRef,data)
     }
     return set(savedConversationsRef,{[conversationID]: new Date().toISOString()})
+}
+
+async function setRate(conversationID , rate){
+    const db = getDatabase(app);
+    let conversationRef = ref(db, `rates`);
+    let snapShot = await get(conversationRef);
+    if(snapShot.exists()){
+        let data = snapShot.val();
+        data = {
+            ...data,
+            [conversationID]: rate
+        }
+        return set(conversationRef,data)
+    }
+    return set(conversationRef,{[conversationID]: rate})
 }
 
 async function getValue(conversationID){
@@ -62,5 +78,6 @@ async function getValue(conversationID){
 module.exports = {
     setValue,
     getValue,
-    saveChatID
+    saveChatID,
+    setRate
 }

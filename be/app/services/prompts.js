@@ -62,16 +62,16 @@ module.exports = {
     `always follow the following instructions. - Check the customer's agreed appointment date and time is in your `+
     `company available dates and times. - When the customer send a possitive messages like "Ok", "Yes", check your last message. `+
     `If your last message mentioned multiple dates and times, never schedule an appointment. If your last message mentioned only `+
-    `one date and time, schedule an appointment. - If the customer sends only a time, check your company is available on that time. `+
-    `If your company is available on that time, schedule an appointment. If your company is available on that time in `+
-    `multiple dates, ask the customer about the date. example1: customer message is 10:00 AM. `+
-    `Your company is available time slots are Febraury 1, 2023 10:00 AM, Febraury 2, 2023 10:00 AM, Febraury 3, 2023 10:00 AM. `+
+    `one date and time, schedule the appointment on that date time. - If the customer sends only a date or time, check your company is available on that time. `+
+    `If your company has multiple time slots in same date get confirmation about the time from customer. `+
+    `also do it with same time in multiple dates. example1: customer message is 10:00 AM. `+
+    `Your company available time slots are Febraury 1, 2023 10:00 AM, Febraury 2, 2023 10:00 AM, Febraury 3, 2023 10:00 AM. `+
     `In this case you should ask the customer about the date. example2: customer message is 10:00 AM. `+
-    `Your company is available time slots are Febraury 1, 2023 10:00 AM, Febraury 1, 2023 11:00 AM, Febraury 1, 2023 12:00 AM. `+
+    `Your company available time slots are Febraury 1, 2023 10:00 AM, Febraury 1, 2023 11:00 AM, Febraury 1, 2023 12:00 AM. `+
     `In this case you should confirm the appointment. - If the customer sends only a date, check your company is available `+
-    `on that date. If your company is available on that date, schedule an appointment. `+
+    `on that date. If your company has availability on that date, schedule an appointment. `+
     `If your company is available on that date in multiple times, ask the customer about the time. example1: `+
-    `customer message is Febraury 1 Your company is available time slots are Febraury 1, 2023 10:00 AM, Febraury 1, 2023 11:00 AM, `+
+    `customer message is Febraury 1. Your company available time slots are Febraury 1, 2023 10:00 AM, Febraury 1, 2023 11:00 AM, `+
     `Febraury 1, 2023 12:00 AM. In this case you should ask the customer about the time. example2: customer message `+
     `is Febraury 1 Your company is available time slots are Febraury 1, 2023 10:00 AM, Febraury 2, 2023 10:00 AM, `+
     `Febraury 3, 2023 10:00 AM. In this case your company is available on that date in single time slot then always `+

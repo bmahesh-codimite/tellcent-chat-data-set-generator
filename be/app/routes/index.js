@@ -1,6 +1,6 @@
 const express = require('express');
 const { getToken } = require("../services/auth");
-const { startChat, chat, saveChatID } = require('../services/chat');
+const { startChat, chat, saveChatID , rateChat } = require('../services/chat');
 
 const AuthRouter = express.Router();
 
@@ -11,6 +11,7 @@ const ChatRouter = express.Router();
 ChatRouter.post("/start",startChat)
 ChatRouter.post("/",chat)
 ChatRouter.post("/save",saveChatID)
+ChatRouter.post("/rate",rateChat)
 
 const BaseRouter = express.Router();
 

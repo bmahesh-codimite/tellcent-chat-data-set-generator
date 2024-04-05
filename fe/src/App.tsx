@@ -16,6 +16,7 @@ type Message = {
 type Thread = {
 	isProcessing: boolean
 	conversation: Message[]
+	timeSlots?: any
 }
 
 function App() {
@@ -152,12 +153,27 @@ function App() {
 						Also, remember to rate the chat model based on your experience.
 					</li>
 				</ol>
+				{conversations.timeSlots?.length > 0 && (
+					<div>
+						<h4 className="text-2xl font-bold mb-4">
+							Available Time Slots
+						</h4>
+						{conversations.timeSlots.map((slot: any , index: number)=>{
+							return (
+								<div key={index} className='bg-blue-200 p-2 my-2 rounded-md'>
+									<p>{slot}</p>
+								</div>
+							)
+						})}
+					</div>
+				)}
 			</div>
 			<div>
-					{!isStarted && 
+				{!isStarted && 
 					<div className='bg-red-200 p-2 my-2 rounded-md'>
 						Hello there! Please click on the start chat button to start the conversation	
-					</div>}
+					</div>
+				}
 					<div className='max-h-screen overflow-y-auto'>
 						{conversations.conversation.map((conv, index) => {
 							switch (conv.category) {

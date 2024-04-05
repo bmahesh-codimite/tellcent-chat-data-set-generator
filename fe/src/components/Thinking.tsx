@@ -1,24 +1,14 @@
 export default function Thinking(){
 
+
     return (
-        <svg xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink" style={{backgroundColor:"transparent",display:"block",shapeRendering:"auto"}} width="50px" height="50px" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid">
-            <rect x="19" y="19" width="20" height="20" fill="#1d3f72">
-            <animate attributeName="fill" values="#5699d2;#1d3f72;#1d3f72" keyTimes="0;0.125;1" dur="1s" repeatCount="indefinite" begin="0s" calcMode="discrete"></animate>
-            </rect><rect x="40" y="19" width="20" height="20" fill="#1d3f72">
-            <animate attributeName="fill" values="#5699d2;#1d3f72;#1d3f72" keyTimes="0;0.125;1" dur="1s" repeatCount="indefinite" begin="0.125s" calcMode="discrete"></animate>
-            </rect><rect x="61" y="19" width="20" height="20" fill="#1d3f72">
-            <animate attributeName="fill" values="#5699d2;#1d3f72;#1d3f72" keyTimes="0;0.125;1" dur="1s" repeatCount="indefinite" begin="0.25s" calcMode="discrete"></animate>
-            </rect><rect x="19" y="40" width="20" height="20" fill="#1d3f72">
-            <animate attributeName="fill" values="#5699d2;#1d3f72;#1d3f72" keyTimes="0;0.125;1" dur="1s" repeatCount="indefinite" begin="0.875s" calcMode="discrete"></animate>
-            </rect><rect x="61" y="40" width="20" height="20" fill="#1d3f72">
-            <animate attributeName="fill" values="#5699d2;#1d3f72;#1d3f72" keyTimes="0;0.125;1" dur="1s" repeatCount="indefinite" begin="0.375s" calcMode="discrete"></animate>
-            </rect><rect x="19" y="61" width="20" height="20" fill="#1d3f72">
-            <animate attributeName="fill" values="#5699d2;#1d3f72;#1d3f72" keyTimes="0;0.125;1" dur="1s" repeatCount="indefinite" begin="0.75s" calcMode="discrete"></animate>
-            </rect><rect x="40" y="61" width="20" height="20" fill="#1d3f72">
-            <animate attributeName="fill" values="#5699d2;#1d3f72;#1d3f72" keyTimes="0;0.125;1" dur="1s" repeatCount="indefinite" begin="0.625s" calcMode="discrete"></animate>
-            </rect><rect x="61" y="61" width="20" height="20" fill="#1d3f72">
-            <animate attributeName="fill" values="#5699d2;#1d3f72;#1d3f72" keyTimes="0;0.125;1" dur="1s" repeatCount="indefinite" begin="0.5s" calcMode="discrete"></animate>
-            </rect>
-        </svg>
+        // tailwind skeleton
+        <div className="animate-pulse flex space-x-4">
+            <div className="flex-1 space-y-4 py-1">
+                <div className="h-3 bg-gray-400 rounded"></div>
+                <div className="h-3 bg-gray-400 rounded w-3/4"></div>
+                <div className="h-3 bg-gray-400 rounded w-12"></div>
+            </div>
+        </div>
     )
 }

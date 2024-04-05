@@ -16,6 +16,7 @@ const model = new ChatGoogleVertexAI({
 function getTimeSlots(){
     return [
         moment().add(1,"days").format("MMMM D, YYYY h:mm A"),
+        moment().add(1,"days").add(2,"hours").format("MMMM D, YYYY h:mm A"),
         moment().add(2,"days").format("MMMM D, YYYY h:mm A"),
         moment().add(3,"days").format("MMMM D, YYYY h:mm A"),
         moment().add(4,"days").format("MMMM D, YYYY h:mm A"),
@@ -46,7 +47,7 @@ async function startChat(req,res) {
             new SystemMessage(await buildSysPrompt(orgName , timeslots)),
             // new SystemMessage("Welcome to the chat!"),
             new HumanMessage("Hi" , {category: 200}),
-            new AIMessage(`Hi I am an agent of ${orgName}. I would like to schedule an appointment for your car wash needs. Is ${new Date().toLocaleDateString()} at 10:00 AM convenient for you?`),
+            new AIMessage(`Hi Jane, I am an agent of ${orgName}. I would like to schedule an appointment for your car wash needs. Is ${timeslots[0]} convenient for you?`),
         ]
         let conversationDicts = toMsgs(messages)
         await setValue(conversationID,conversationDicts,false , timeslots)

@@ -11,6 +11,10 @@ const model = new ChatGoogleVertexAI({
     temperature: 0.4,
     model:"chat-bison@002",
     examples: examples,
+    topP: 1,
+    topK: 5,
+    maxOutputTokens: 1024,
+    cache: false,
 })
 
 function getTimeSlots(){

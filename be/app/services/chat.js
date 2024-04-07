@@ -3,16 +3,16 @@ const { AIMessage, HumanMessage, SystemMessage} = require( "@langchain/core/mess
 const { setValue, getValue , saveChatID: saveChat, setRate } = require("./firebase");
 const { X_API_KEY } = require("./constants")
 const { PromptTemplate } = require("@langchain/core/prompts");
-const { SYS_PROMPT_TEMPLATE } = require("./prompts");
+const { SYS_PROMPT_TEMPLATE_V2 :SYS_PROMPT_TEMPLATE } = require("./prompts");
 const moment = require("moment")
 const examples = require("../examples/conversation")
 
 const model = new ChatGoogleVertexAI({
-    temperature: 0.4,
+    temperature: 0.3,
     model:"chat-bison@002",
     examples: examples,
     topP: 1,
-    topK: 5,
+    // topK: 5,
     maxOutputTokens: 1024,
     cache: false,
 })
@@ -28,13 +28,36 @@ function getTimeSlots(){
     ]
 }
 
-function buildSysPrompt(orgName , timeslots){
+function duplicateDates(slots) {
+    let dates = {}
+    for (let slot of slots) {
+        let date = moment(slot).format("MMMM D, YYYY")
+        dates[date] = dates[date] ? dates[date] + 1 : 1
+    }
+    return Object.keys(dates).filter(date => dates[date] > 1)
+}
+
+function duplicateTimes(slots) {
+    let times = {}
+    for (let slot of slots) {
+        let time = moment(slot).format("h:mm A")
+        let date = moment(slot).format("MMMM D, YYYY")
+        // add duplicate dates to the list
+        times[time] = [...(times[time] || []), date]
+    }
+    return Object.keys(times).map(time=> times[time]).filter(dates => dates.length > 1).map(dates=> dates.map(date=> moment(date).format("MMMM D"))).join("\n- ")
+}
+
+function buildSysPrompt(orgName , timeslots , duplicateDatesList , duplicateTimesList){
     const promptTemplate = PromptTemplate.fromTemplate(SYS_PROMPT_TEMPLATE)
     return promptTemplate.format({
         orgName: orgName,
         services:"- Car wash\n- Window cleaning\n- Interior cleaning\n- Waxing\n- Oil change\n- Tire rotation\n- Windshield Cleaning",
         availableTimeSlots: timeslots.join("\n- "),
-        appointmentNumber: Math.floor(Math.random() * 1000) // Random number between 0 and 1000
+        appointmentNumber: Math.floor(Math.random() * 10000), // Random number between 0 and 1000
+        tasks: "appointment scheduling, rescheduling, cancellation and answering questions about company information, services, and available time slots",
+        multipleTimeslotsDates: duplicateDatesList,
+        multipleDatesTimeslots: duplicateTimesList,
     })
 }
 
@@ -47,9 +70,10 @@ async function startChat(req,res) {
         }
         const orgName = req.body.orgName
         const timeslots = getTimeSlots()
+        let duplicateDatesList = duplicateDates(timeslots)
+        let duplicateTimesList = duplicateTimes(timeslots)
         let messages = [
-            new SystemMessage(await buildSysPrompt(orgName , timeslots)),
-            // new SystemMessage("Welcome to the chat!"),
+            new SystemMessage(await buildSysPrompt(orgName , timeslots , duplicateDatesList , duplicateTimesList)),
             new HumanMessage("Hi" , {category: 200}),
             new AIMessage(`Hi Jane, I am an agent of ${orgName}. I would like to schedule an appointment for your car wash needs. Is ${timeslots[0]} convenient for you?`),
         ]
@@ -98,7 +122,9 @@ async function processor(conversationID , messages , orgName , slots){
 }
 
 async function getSysMsg(orgName , slots) {
-    return new SystemMessage(await buildSysPrompt(orgName, slots))
+    let duplicateDatesList = duplicateDates(slots)
+    let duplicateTimesList = duplicateTimes(slots)
+    return new SystemMessage(await buildSysPrompt(orgName, slots , duplicateDatesList , duplicateTimesList))
 }
 
 function fromMsgs(msgs) {

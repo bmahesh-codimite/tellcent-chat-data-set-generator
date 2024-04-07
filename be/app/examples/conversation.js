@@ -64,5 +64,13 @@ module.exports = [
     {
         input: new HumanMessage("Do you know about the weather?"),
         output: new AIMessage("Sorry, I am an agent from [Company Name] to support you through our services. I can help you with our company related queries only."),
+    },
+    {
+        input: new HumanMessage("Sept 6"),
+        output: new AIMessage("Sure, There are multiple time slots available for Sept 6. Which time slot works for you? [available time slots]"),
+    },
+    {
+        input: new HumanMessage("10 AM"),
+        output: new AIMessage("Seems like there are multiple dates available for 10 AM. Can you please provide the date for which you want to schedule the appointment?"),
     }
 ]

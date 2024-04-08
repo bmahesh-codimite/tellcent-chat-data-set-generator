@@ -18,7 +18,7 @@ async function canAnswer(message) {
         const model = gemini(0.2,1,1)
         const response = await prompt.pipe(model).pipe(outputParser).invoke({
             conversation: message,
-            agentKnowledge: "\n- ABC car wash location\n-Car wash\n- Window cleaning\n- Interior cleaning\n- Waxing\n- Oil change\n- Tire rotation\n- Windshield Cleaning",
+            agentKnowledge: "\n- Splash Car Wash location\n-Car wash\n- Window cleaning\n- Interior cleaning\n- Waxing\n- Oil change\n- Tire rotation\n- Windshield Cleaning",
             output_instructions: outputParser.getFormatInstructions(),
             tasks: "appointment scheduling, rescheduling, cancellation and answering questions about company information, services, and available time slots"
         })

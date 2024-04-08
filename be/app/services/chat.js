@@ -118,7 +118,6 @@ async function processor(conversationID , messages , orgName , slots){
         let conversationWithoutLastMsg = messages.slice(0,messages.length - 1)
         let explanation = await explain(conversationWithoutLastMsg , lastMsg , slots)
         let explainPrompt = explainResults(explanation)
-        let explanationGemini = await explainGemini(conversationWithoutLastMsg , lastMsg , slots) // Explain using Gemini
         let conversation = [await getSysMsg(orgName , slots , explainPrompt),...fromMsgs(messages)] // Add system message to the conversation
         let chatOpenAIModel = chatOpenAI(0.2,1,1)
         let response = await chatOpenAIModel.invoke(conversation)
@@ -221,51 +220,8 @@ async function rateChat(req , res){
     }
 }
 
-async function explainPrompt(conversation , lastMessage , slots){
-    // return PromptTemplate.fromTemplate("This message is sent by the customer "+
-    //     "to a customer service agent. "+
-    //     "The agent can only do the following tasks: {tasks}"+
-    //     "The company of the agent is offering following services: {services}. "+
-    //     "Company is accepting appointments on the following time slots: {timeslots}. "+
-    //     "This message is a part of a conversation. "+
-    //     "You should understand the conversation history and give an explanation about the last message. "+
-    //     "Explain about the following points: "+
-    //     "\n- What is customer asking for."+
-    //     "\n- If customer sends a message only with a date or time give the full date and time according "+
-    //     "to the conversation history. time format is MMMM D, YYYY h:mm A "+
-    //     "\n- The agent has knowledge about their company. Determine the relativeness of the message to the company details."+
-    //     "when you determine the relativeness, you should consider the following points: \n"+
-    //     "\n- The message is a follow-up message to the previous conversation. if the message is a follow-up message, always analyze the full conversation history, then determine the relativeness according to the following points: "+
-    //     "\n- The message is related to the company services. "+
-    //     "\n- The message is related to the company time slots. "+
-    //     "\n- can agent provide the service that the customer is asking for. "+
-    //     "\n The customer is asking for a service that is not available in the company services. "+
-    //     "\n- The customer is asking for a time slot that is not available in the company time slots. "+
-    //     "if the message is not a follow-up message, determine the relativeness according to the following points: "+
-    //     "\n- The message is related to the company services. "+
-    //     "\n- The message is related to the company time slots. "+
-    //     "\n- The customer is asking for a service that is not available in the company services. "+
-    //     "\n- The customer is asking for a time slot that is not available in the company time slots. "+
-    //     "\n- can agent provide the service that the customer is asking for. "+
-    //     "\nConversation History: {conversation}"+
-    //     "\nLast Message: {lastMessage}"+
-    //     "{output_instructions}"
-    // )
-    // let promptTemplate = new PromptTemplate({
-    //     inputVariables: ["services","timeslots","conversation","lastMessage","output_instructions","tasks"],
-    //     template: explainationPrompt,
-    //     outputParser: StructuredOutputParser.fromZodSchema(explainZod),
-    // })
-    // let outputParser = StructuredOutputParser.fromZodSchema(explainZod)
+async function explainPrompt(){
     const template = PromptTemplate.fromTemplate(explainationPrompt)
-    // console.log(await template.format({
-    //     services:"- Car wash\n- Window cleaning\n- Interior cleaning\n- Waxing\n- Oil change\n- Tire rotation\n- Windshield Cleaning",
-    //         timeslots: slots.join("\n- "),
-    //         conversation: conversationToString(conversation),
-    //         lastMessage: lastMessage,
-    //         output_instructions: outputParser.getFormatInstructions(),
-    //         tasks: "appointment scheduling, rescheduling, cancellation and answering questions about company information, services, and available time slots",
-    // }))
     return template
 }
 
@@ -289,7 +245,7 @@ async function explain(conversation , lastMessage , slots){
     try {
         let model = openAI(0.2,1,1)
         let outputParser = StructuredOutputParser.fromZodSchema(explainZod)
-        let prompt = await explainPrompt(conversation , lastMessage , slots)
+        let prompt = await explainPrompt()
         let chain = prompt.pipe(model).pipe(outputParser)
         let res = await chain.invoke({
             services:"- Car wash\n- Window cleaning\n- Interior cleaning\n- Waxing\n- Oil change\n- Tire rotation\n- Windshield Cleaning",
@@ -298,29 +254,7 @@ async function explain(conversation , lastMessage , slots){
             lastMessage: lastMessage,
             output_instructions: outputParser.getFormatInstructions(),
             tasks: "appointment scheduling, rescheduling, cancellation and answering questions about company information, services, and available time slots",
-            orgName: "ABC Car Wash",
-        })
-        console.log("explain res",res)
-        return res
-    } catch (error) {
-        console.error("explain Err",error)
-    }
-}
-
-async function explainGemini(conversation , lastMessage , slots){
-    try {
-        let model = gemini(0.2,1,1)
-        let outputParser = StructuredOutputParser.fromZodSchema(explainZod)
-        let prompt = await explainPrompt(conversation , lastMessage , slots)
-        let chain = prompt.pipe(model).pipe(outputParser)
-        let res = await chain.invoke({
-            services:"- Car wash\n- Window cleaning\n- Interior cleaning\n- Waxing\n- Oil change\n- Tire rotation\n- Windshield Cleaning",
-            timeslots: slots.join("\n- "),
-            conversation: conversationToString(conversation),
-            lastMessage: lastMessage,
-            output_instructions: outputParser.getFormatInstructions(),
-            tasks: "appointment scheduling, rescheduling, cancellation and answering questions about company information, services, and available time slots",
-            orgName: "ABC Car Wash",
+            orgName: "Splash Car Wash",
         })
         console.log("explain res",res)
         return res
